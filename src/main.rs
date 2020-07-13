@@ -1,11 +1,13 @@
 mod transaction_parsing;
 
-use transaction_parsing::process_transactions_csv;
+use transaction_parsing::retrieve_transactions_data;
 
 fn main() 
 {
 
     let file_name = "resources/transactions.csv";
-    process_transactions_csv(&file_name);
+    let transactions_data = retrieve_transactions_data(&file_name);
+
+    println!("{:#?}", transactions_data);
 
 }
