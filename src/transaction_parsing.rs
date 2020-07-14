@@ -1,5 +1,5 @@
 use csv::Reader;
-use std::error::Error;
+//use std::error::Error;
 use std::fs::File;
 
 //A struct that collects relevant transaction data
@@ -65,9 +65,7 @@ fn process_transactions_data(transactions_reader: &mut csv::Reader<File>) -> Vec
     }
 
     transaction_data
-
 }
-
 
 fn parse_credentials_for_code(credentials: &str) -> String
 {
