@@ -1,14 +1,7 @@
 use csv::Reader;
-//use std::error::Error;
 use std::fs::File;
-
-//A struct that collects relevant transaction data
-#[derive(Debug)]
-pub struct Tdata 
-{
-    property_code: String,
-    amount: f64,
-}
+use crate::t_data::Tdata;
+//use std::error::Error;
 
 pub fn retrieve_transactions_data(file_name: &str) -> Vec<Tdata>
 {
