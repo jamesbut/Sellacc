@@ -14,7 +14,7 @@ fn main()
 
     println!("{:#?}", transactions_data);
 
-    //login();
-    property_search(&transactions_data);
+    login();
+    //property_search(&transactions_data);
 
 }
