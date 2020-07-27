@@ -16,6 +16,7 @@ fn main()
     //login();
     //property_search(&transactions_data);
     //lettings_search();
-    lettings_detail_search();
+    //lettings_detail_search();
+    receipts_search();
 
 }
