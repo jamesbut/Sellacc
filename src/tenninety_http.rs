@@ -1,4 +1,6 @@
 use reqwest::blocking::Client;
+use reqwest::blocking::RequestBuilder;
+use reqwest::blocking::Response;
 use reqwest::header;
 use std::io::Read;
 use std::process;
@@ -48,33 +50,49 @@ pub fn login()
 pub fn property_search(transactions: &Vec<Tdata>)
 {
 
-    let property_search_url = "https://hub1.10ninety.co.uk/lettings/admin/PropDetail.asp?id=HAR-082";
+    let property_search_url = "https://hub1.10ninety.co.uk/lettings/admin/PropDetail.asp?\
+                               id=HAR-082";
 
     let client = Client::new();
-
     let default_headers = build_default_headers();
 
     //Build header 
     let property_search_headers = build_property_search_headers(&default_headers);
 
     //Send request
-    let mut request = client.get(property_search_url)
+    let request = client.get(property_search_url)
         .headers(property_search_headers);
 
-    println!("{:?}\n", request);
+    println!("Request: \n{:?}", request);
 
-    let mut response = request.send().unwrap();
+    let response = request.send().unwrap();
 
-    println!("{:?}\n", response);
-
-    //let mut body = String::new();
-    //response.read_to_string(&mut body);
-    let mut body = response.text();
-
-    println!("Body: \n{:?}", body);
+    display_response(response);
 
 }
 
+pub fn lettings_search()
+{
+    let lettings_search_url = "https://hub1.10ninety.co.uk/lettings/admin/lettingslist.asp?\
+                               Ref=HAR-082";
+
+    let client = Client::new();
+    let default_headers = build_default_headers();
+
+    //Build header
+    let lettings_search_headers = build_lettings_search_headers(&default_headers);
+
+    //Send request
+    let request = client.get(lettings_search_url)
+        .headers(lettings_search_headers);
+
+    println!("Request: \n{:?}", request);
+
+    let response = request.send().unwrap();
+
+    display_response(response);
+
+}
 
 fn build_default_headers() -> header::HeaderMap
 {
@@ -123,7 +141,6 @@ fn build_default_headers() -> header::HeaderMap
 
 }
 
-
 fn build_property_search_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
 {
     let mut property_search_headers = default_headers.clone();
@@ -138,7 +155,6 @@ fn build_property_search_headers(default_headers: &header::HeaderMap) -> header:
 
     property_search_headers
 }
-
 
 fn build_login_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
 {
@@ -155,4 +171,42 @@ fn build_login_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
 
     login_headers
 
+}
+
+fn build_lettings_search_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
+{
+
+    let mut lettings_search_headers = default_headers.clone();
+
+    let referer = "https://hub1.10ninety.co.uk/lettings/admin/propdetail.asp?Id=HAR-082";
+    lettings_search_headers.insert(header::REFERER, header::HeaderValue::from_static(referer));
+    /*
+    let cookie = "ASPSESSIONIDCGQTTBRA=PNOOJOKCGGDEBFKNFDCOPDED; Tenant=; Letkey=; Landlord=; \
+                  Company=Sellectlets; LetAct=; Position=Consultant; UserType=M; \
+                  UserFullname=James+Butterworth; User=James; Connection=sellectlets; \
+                  Test=test; Ref=; Password=tester";
+    */
+    let cookie = "ASPSESSIONIDAESQRDQB=JFKLPOCDKJDDFDDGAAPHAEFL; Company=Sellectlets; LetAct=; \
+                  Position=Consultant; UserType=M; UserFullname=James+Butterworth; User=James; \
+                  Connection=sellectlets; Test=test; Password=tester; Ref=HAR%2D082; \
+                  sizeareafields=true; RMtenancyfees=true; RMtenancyfeesPropDet=true; \
+                  Landlord=Lucinda+Mercer; Tenant=Michala+Pigova; \
+                  ASPSESSIONIDAASQRDQB=KKPLPOCDHFJPGCHFFDJAOAEN; \
+                  Letkey=HAR%2D082%3B10%2F05%2F2020";
+    lettings_search_headers.insert(header::COOKIE, header::HeaderValue::from_static(cookie));
+
+    lettings_search_headers
+
+}
+
+fn display_response(response: Response)
+{
+    println!("{:?}\n", response);
+
+    //let mut body = String::new();
+    //response.read_to_string(&mut body);
+    //let body = response.text();
+
+    //println!("Body: \n{:?}", body);
+    println!("Body: \n{:?}", response.text());
 }

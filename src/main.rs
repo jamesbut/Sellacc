@@ -3,8 +3,9 @@ mod tenninety_http;
 mod t_data;
 
 use transaction_parsing::retrieve_transactions_data;
-use tenninety_http::login;
-use tenninety_http::property_search;
+//use tenninety_http::login;
+//use tenninety_http::property_search;
+use tenninety_http::*;
 
 fn main() 
 {
@@ -14,7 +15,8 @@ fn main()
 
     println!("{:#?}", transactions_data);
 
-    login();
+    //login();
     //property_search(&transactions_data);
+    lettings_search();
 
 }
