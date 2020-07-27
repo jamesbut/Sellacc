@@ -94,6 +94,31 @@ pub fn lettings_search()
 
 }
 
+pub fn lettings_detail_search()
+{
+    let lettings_detail_search_url = 
+        "https://hub1.10ninety.co.uk/lettings/admin/LettingsDetail.asp?Ref=HAR-082;10/05/2020";
+
+    let client = Client::new();
+    let default_headers = build_default_headers();
+
+    //Build header
+    let lettings_detail_search_headers = 
+        build_lettings_detail_search_headers(&default_headers);
+
+    //Send request
+    let request = client.get(lettings_detail_search_url)
+        .headers(lettings_detail_search_headers);
+
+    println!("Request: \n{:?}", request);
+
+    let response = request.send().unwrap();
+
+    display_response(response);
+
+}
+
+
 fn build_default_headers() -> header::HeaderMap
 {
     let mut default_headers = header::HeaderMap::new();
@@ -180,22 +205,41 @@ fn build_lettings_search_headers(default_headers: &header::HeaderMap) -> header:
 
     let referer = "https://hub1.10ninety.co.uk/lettings/admin/propdetail.asp?Id=HAR-082";
     lettings_search_headers.insert(header::REFERER, header::HeaderValue::from_static(referer));
-    /*
-    let cookie = "ASPSESSIONIDCGQTTBRA=PNOOJOKCGGDEBFKNFDCOPDED; Tenant=; Letkey=; Landlord=; \
-                  Company=Sellectlets; LetAct=; Position=Consultant; UserType=M; \
-                  UserFullname=James+Butterworth; User=James; Connection=sellectlets; \
-                  Test=test; Ref=; Password=tester";
-    */
-    let cookie = "ASPSESSIONIDAESQRDQB=JFKLPOCDKJDDFDDGAAPHAEFL; Company=Sellectlets; LetAct=; \
-                  Position=Consultant; UserType=M; UserFullname=James+Butterworth; User=James; \
-                  Connection=sellectlets; Test=test; Password=tester; Ref=HAR%2D082; \
-                  sizeareafields=true; RMtenancyfees=true; RMtenancyfeesPropDet=true; \
-                  Landlord=Lucinda+Mercer; Tenant=Michala+Pigova; \
+    let cookie = "ASPSESSIONIDAESQRDQB=JFKLPOCDKJDDFDDGAAPHAEFL; Company=Sellectlets; \
+                  LetAct=; Position=Consultant; UserType=M; UserFullname=James+Butterworth; \
+                  User=James; Connection=sellectlets; Test=test; Password=tester; \
+                  Ref=HAR%2D082; sizeareafields=true; RMtenancyfees=true; \
+                  RMtenancyfeesPropDet=true; Landlord=Lucinda+Mercer; Tenant=Michala+Pigova; \
                   ASPSESSIONIDAASQRDQB=KKPLPOCDHFJPGCHFFDJAOAEN; \
                   Letkey=HAR%2D082%3B10%2F05%2F2020";
     lettings_search_headers.insert(header::COOKIE, header::HeaderValue::from_static(cookie));
 
     lettings_search_headers
+
+}
+
+
+fn build_lettings_detail_search_headers(default_headers: &header::HeaderMap) 
+    -> header::HeaderMap
+{
+
+    let mut lettings_detail_search_headers = default_headers.clone();
+
+    let referer = "https://hub1.10ninety.co.uk/lettings/admin/lettingslist.asp?Ref=HAR-082";
+    lettings_detail_search_headers.insert(header::REFERER, 
+                                          header::HeaderValue::from_static(referer));
+    //I think this cookie is the same as the one above
+    let cookie = "ASPSESSIONIDAESQRDQB=JFKLPOCDKJDDFDDGAAPHAEFL; Company=Sellectlets; \
+                  LetAct=; Position=Consultant; UserType=M; UserFullname=James+Butterworth; \
+                  User=James; Connection=sellectlets; Test=test; Password=tester; \
+                  Ref=HAR%2D082; sizeareafields=true; RMtenancyfees=true; \
+                  RMtenancyfeesPropDet=true; Landlord=Lucinda+Mercer; Tenant=Michala+Pigova; \
+                  ASPSESSIONIDAASQRDQB=KKPLPOCDHFJPGCHFFDJAOAEN; \
+                  Letkey=HAR%2D082%3B10%2F05%2F2020";
+    lettings_detail_search_headers.insert(header::COOKIE, 
+                                          header::HeaderValue::from_static(cookie));
+
+    lettings_detail_search_headers
 
 }
 

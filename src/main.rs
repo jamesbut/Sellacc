@@ -3,8 +3,6 @@ mod tenninety_http;
 mod t_data;
 
 use transaction_parsing::retrieve_transactions_data;
-//use tenninety_http::login;
-//use tenninety_http::property_search;
 use tenninety_http::*;
 
 fn main() 
@@ -17,6 +15,7 @@ fn main()
 
     //login();
     //property_search(&transactions_data);
-    lettings_search();
+    //lettings_search();
+    lettings_detail_search();
 
 }
