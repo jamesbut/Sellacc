@@ -11,13 +11,14 @@ fn main()
     let file_name = "resources/transactions.csv";
     let transactions_data = retrieve_transactions_data(&file_name);
 
-    println!("{:#?}", transactions_data);
+    //println!("{:#?}", transactions_data);
 
+    login_init_url();
     //login();
     //property_search(&transactions_data);
     //lettings_search();
     //lettings_detail_search();
     //receipts_search();
-    input_receipt();
+    //input_receipt();
 
 }

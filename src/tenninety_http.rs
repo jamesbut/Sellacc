@@ -6,9 +6,53 @@ use std::io::Read;
 use std::process;
 use crate::t_data::Tdata;
 
+pub fn login_init_url()
+{
+    let init_login_url = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp";
+    let client = Client::new();
+
+    let default_headers = build_default_headers();
+
+    let init_login_headers = build_init_login_headers(&default_headers);
+
+    let login_params = [("Id", "James"), 
+                        ("Password", "tester"), 
+                        ("login.x", "0"), 
+                        ("login.y", "0")];
+
+    //let login_params_str = "Id=James&Password=tester&login.x=0&login.y=0";
+
+    //let client = Client::new();
+    
+    let client = Client::builder()
+        .cookie_store(true)
+        .build()
+        .unwrap();
+    
+
+    let request = client.post(init_login_url)
+        .headers(init_login_headers)
+        .form(&login_params)
+        .build()
+        .unwrap();
+
+    println!("{:?}\n", request);
+    println!("{:?}\n", request.body());
+
+    let response = client.execute(request).unwrap();
+
+    println!("{:?}", response);
+    //println!("{:?}", response.text());
+    let cookies = response.cookies();
+    for cookie in cookies
+    {
+        println!("{:?}", cookie);
+    }
+
+}
+
 pub fn login()
 {
-    let google_url = "https://www.google.com";
     let tenninety_url = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp";
     let tenninety_login_url = "https://hub1.10ninety.co.uk/lettings/admin/Admin.Asp";
 
@@ -148,20 +192,20 @@ pub fn input_receipt()
     let client = Client::new();
     let default_headers = build_default_headers();
 
-    let input_receipt_headers = build_input_receipt_headers(&default_headers);
+    //let wrk_key = ;
 
-    /*
-    let input_receipt_params = [("Id", "James"), 
-                                ("Password", "tester"), 
-                                ("login.x", "0"), 
-                                ("login.y", "0")];
-    */
+    let body_string = "curPage=&WrkKey=HAR-082%3B10%2F05%2F2020&Date1=11%2F05%2F2020&Description1=+Rent+from+10%2F05%2F2020+to+09%2F06%2F2020&Amountdue1=500.00&Amount1=500.00&Receivedfrom1=t&Method1=F&Note1=&receivedby1=Neal&Duedate1=10%2F05%2F2020&Key1=39826&Upd1=0&Date2=10%2F06%2F2020&Description2=Rent+from+10%2F06%2F2020+to+09%2F07%2F2020&Amountdue2=500.00&Amount2=500.00&Receivedfrom2=t&Method2=F&Note2=&receivedby2=Neal&Duedate2=10%2F06%2F2020&Key2=40238&Upd2=0&Date3=10%2F07%2F2020&Description3=Rent+from+10%2F07%2F2020+to+09%2F08%2F2020&Amountdue3=500.00&Amount3=500.00&Receivedfrom3=t&Method3=F&Note3=&receivedby3=Neal&Duedate3=10%2F07%2F2020&Key3=40666&Upd3=0&Date4=29%2F07%2F2020&Description4=Rent+from+10%2F08%2F2020+to+09%2F09%2F2020&Amountdue4=500.00&Amount4=0.01&Receivedfrom4=t&Method4=F&Note4=&Receivedby4=James&Duedate4=10%2F08%2F2020&Key4=0&Upd4=1&MiscDate=&MiscDescription=&miscamountdue=&miscamount=&miscreceivedfrom=&miscmethod4=&miscnote=&miscreceivedby=&Tenant=Michala+Pigova&Letdate=10%2F05%2F2020&LetEnddate=09%2F05%2F2021&deposit=0&rent=500&fees=0&payfreq=m&Update1.x=44&Update1.y=6";
+    let body_string_size = body_string.chars().count();
+    println!("{:?}", body_string_size);
+
+    let input_receipt_headers = build_input_receipt_headers(&default_headers, body_string_size);
 
     let request = client.post(input_receipt_url)
         .headers(input_receipt_headers)
-        .body("curPage=&WrkKey=HAR-082%3B10%2F05%2F2020&Date1=11%2F05%2F2020&Description1=+Rent+from+10%2F05%2F2020+to+09%2F06%2F2020&Amountdue1=500.00&Amount1=500.00&Receivedfrom1=t&Method1=F&Note1=&receivedby1=Neal&Duedate1=10%2F05%2F2020&Key1=39826&Upd1=0&Date2=10%2F06%2F2020&Description2=Rent+from+10%2F06%2F2020+to+09%2F07%2F2020&Amountdue2=500.00&Amount2=500.00&Receivedfrom2=t&Method2=F&Note2=&receivedby2=Neal&Duedate2=10%2F06%2F2020&Key2=40238&Upd2=0&Date3=10%2F07%2F2020&Description3=Rent+from+10%2F07%2F2020+to+09%2F08%2F2020&Amountdue3=500.00&Amount3=500.00&Receivedfrom3=t&Method3=F&Note3=&receivedby3=Neal&Duedate3=10%2F07%2F2020&Key3=40666&Upd3=0&Date4=29%2F07%2F2020&Description4=Rent+from+10%2F08%2F2020+to+09%2F09%2F2020&Amountdue4=500.00&Amount4=0.01&Receivedfrom4=t&Method4=F&Note4=&Receivedby4=James&Duedate4=10%2F08%2F2020&Key4=0&Upd4=1&MiscDate=&MiscDescription=&miscamountdue=&miscamount=&miscreceivedfrom=&miscmethod4=&miscnote=&miscreceivedby=&Tenant=Michala+Pigova&Letdate=10%2F05%2F2020&LetEnddate=09%2F05%2F2021&deposit=0&rent=500&fees=0&payfreq=m&Update1.x=44&Update1.y=6");
+        .body(body_string);
 
     println!("Request: \n{:?}", request);
+    return;
 
     let response = request.send().unwrap();
 
@@ -247,6 +291,26 @@ fn build_login_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
 
 }
 
+fn build_init_login_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
+{
+    let mut init_login_headers = default_headers.clone();
+
+    let referer = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp?";
+    init_login_headers.insert(header::REFERER, header::HeaderValue::from_static(referer));
+    let content_length = "44";
+    init_login_headers.insert(header::CONTENT_LENGTH,
+                              header::HeaderValue::from_static(content_length));
+    //I don't know whether origin should be part of default headers
+    let origin = "https://hub1.10ninety.co.uk";
+    init_login_headers.insert(header::ORIGIN,
+                              header::HeaderValue::from_static(origin));
+    let cookie = "ASPSESSIONIDCESRQCRA=JHLMCHFAKBIOPGLGAKIEDMOP";
+    init_login_headers.insert(header::COOKIE,
+                              header::HeaderValue::from_static(cookie));
+
+    init_login_headers
+}
+
 fn build_lettings_search_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
 {
 
@@ -314,14 +378,17 @@ fn build_receipts_search_headers(default_headers: &header::HeaderMap) -> header:
     receipts_search_headers
 }
 
-fn build_input_receipt_headers(default_headers: &header::HeaderMap) -> header::HeaderMap
+fn build_input_receipt_headers(default_headers: &header::HeaderMap, 
+                               body_size: usize) -> header::HeaderMap
 {
     let mut input_receipt_headers = default_headers.clone();
 
-    let referer = "https://hub1.10ninety.co.uk/lettings/admin/LettingsReceipts.asp?\
-                   Ref=HAR-082;10/05/2020";
-    input_receipt_headers.insert(header::REFERER, 
-                                 header::HeaderValue::from_static(referer));
+    //Referer doesn't seem necessary
+    //let referer = "https://hub1.10ninety.co.uk/lettings/admin/LettingsReceipts.asp?\
+    //               Ref=HAR-082;10/05/2020";
+    //input_receipt_headers.insert(header::REFERER, 
+    //                             header::HeaderValue::from_static(referer));
+    
     let cookie = "ASPSESSIONIDCESRQCRA=PIBGCHFAJKAFPEFOODDKBECM; Company=Sellectlets; \
                   LetAct=; Position=Consultant; UserType=M; UserFullname=James+Butterworth; \
                   User=James; Connection=sellectlets; Test=test; Password=tester; \
@@ -337,9 +404,9 @@ fn build_input_receipt_headers(default_headers: &header::HeaderMap) -> header::H
     let content_type = "application/x-www-form-urlencoded";
     input_receipt_headers.insert(header::CONTENT_TYPE,
                                  header::HeaderValue::from_static(content_type));
-    let content_length = "1087";
+    let content_length = body_size.to_string();
     input_receipt_headers.insert(header::CONTENT_LENGTH,
-                                 header::HeaderValue::from_static(content_length));
+                                 header::HeaderValue::from_str(&content_length).unwrap());
 
     input_receipt_headers
 }
