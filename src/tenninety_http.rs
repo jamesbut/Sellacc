@@ -1,17 +1,24 @@
 use reqwest::blocking::Client;
 use reqwest::blocking::RequestBuilder;
 use reqwest::blocking::Response;
+use reqwest::redirect::Policy;
 use reqwest::header;
 use std::io::Read;
 use std::process;
 use crate::t_data::Tdata;
 
-pub fn login_init_url()
+pub fn full_chain(transactions: &Vec<Tdata>)
 {
+
+    //Testing with HAR-082
+    let transaction = &transactions[1];
+    let ref_code = &transaction.property_code;
+
     let init_login_url = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp";
     let client = Client::new();
 
-    let default_headers = build_default_headers();
+    //let default_headers = build_default_headers();
+    let default_headers = header::HeaderMap::new();
 
     let init_login_headers = build_init_login_headers(&default_headers);
 
@@ -26,6 +33,9 @@ pub fn login_init_url()
     
     let client = Client::builder()
         .cookie_store(true)
+        //.redirect(Policy::none())
+        //It looks like default headers are not inserted until execution
+        //.default_headers(build_default_headers())
         .build()
         .unwrap();
     
@@ -36,19 +46,40 @@ pub fn login_init_url()
         .build()
         .unwrap();
 
-    println!("{:?}\n", request);
-    println!("{:?}\n", request.body());
+    println!("{:#?}\n", request);
+    //println!("{:?}\n", request.body());
 
     let response = client.execute(request).unwrap();
 
-    println!("{:?}", response);
+    println!("{:#?}", response);
     //println!("{:?}", response.text());
-    let cookies = response.cookies();
-    for cookie in cookies
-    {
-        println!("{:?}", cookie);
-    }
+    //let cookies = response.cookies();
+    //for cookie in cookies
+    //{
+    //    println!("{:?}", cookie);
+    //}
 
+    /* Property search */
+    let property_search_url = "https://hub1.10ninety.co.uk/lettings/admin/propertylist.asp";
+
+    let prop_search_params = [("propsearchqualifier", "reference"), 
+                              ("propsearch", ref_code), 
+                              ("psearch.x", "0"), 
+                              ("psearch.y", "0")];
+    
+    let prop_search_request = client.post(property_search_url)
+        .form(&prop_search_params)
+        .build()
+        .unwrap();
+
+    println!("{:#?}\n", prop_search_request);
+
+    let prop_search_response = client.execute(prop_search_request).unwrap();
+
+    println!("{:#?}", prop_search_response);
+
+
+    
 }
 
 pub fn login()
@@ -295,18 +326,22 @@ fn build_init_login_headers(default_headers: &header::HeaderMap) -> header::Head
 {
     let mut init_login_headers = default_headers.clone();
 
-    let referer = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp?";
-    init_login_headers.insert(header::REFERER, header::HeaderValue::from_static(referer));
-    let content_length = "44";
-    init_login_headers.insert(header::CONTENT_LENGTH,
-                              header::HeaderValue::from_static(content_length));
+    
+    //let referer = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp?";
+    //init_login_headers.insert(header::REFERER, header::HeaderValue::from_static(referer));
+    //Content length doesn't seem to be required either
+    //let content_length = "44";
+    //init_login_headers.insert(header::CONTENT_LENGTH,
+    //                          header::HeaderValue::from_static(content_length));
     //I don't know whether origin should be part of default headers
     let origin = "https://hub1.10ninety.co.uk";
     init_login_headers.insert(header::ORIGIN,
                               header::HeaderValue::from_static(origin));
+    /*
     let cookie = "ASPSESSIONIDCESRQCRA=JHLMCHFAKBIOPGLGAKIEDMOP";
     init_login_headers.insert(header::COOKIE,
                               header::HeaderValue::from_static(cookie));
+    */
 
     init_login_headers
 }

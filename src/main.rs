@@ -13,12 +13,12 @@ fn main()
 
     //println!("{:#?}", transactions_data);
 
-    login_init_url();
+    full_chain(&transactions_data);
     //login();
     //property_search(&transactions_data);
     //lettings_search();
     //lettings_detail_search();
     //receipts_search();
     //input_receipt();
-
+    
 }

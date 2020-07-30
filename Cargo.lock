@@ -806,7 +806,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sellecthomes_accounts"
+name = "sellacc"
 version = "0.1.0"
 dependencies = [
  "csv",
