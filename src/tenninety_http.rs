@@ -59,6 +59,8 @@ pub fn full_chain(transactions: &Vec<Tdata>)
     //    println!("{:?}", cookie);
     //}
 
+    return;
+
     /* Property search */
     let property_search_url = "https://hub1.10ninety.co.uk/lettings/admin/propertylist.asp";
 
