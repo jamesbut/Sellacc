@@ -5,8 +5,6 @@ mod t_data;
 use transaction_parsing::retrieve_transactions_data;
 use tenninety_http::*;
 
-#[macro_use] extern crate log;
-
 fn main() 
 {
     env_logger::init();
