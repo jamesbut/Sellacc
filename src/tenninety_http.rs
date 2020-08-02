@@ -17,20 +17,11 @@ pub fn full_chain(transactions: &Vec<Tdata>)
     let init_login_url = "https://hub1.10ninety.co.uk/sellectlets/admin-login.asp";
     let client = Client::new();
 
-    //let default_headers = build_default_headers();
-    let default_headers = header::HeaderMap::new();
-
-    let init_login_headers = build_init_login_headers(&default_headers);
-
     let login_params = [("Id", "James"), 
                         ("Password", "tester"), 
                         ("login.x", "0"), 
                         ("login.y", "0")];
 
-    //let login_params_str = "Id=James&Password=tester&login.x=0&login.y=0";
-
-    //let client = Client::new();
-    
     let client = Client::builder()
         .cookie_store(true)
         //.redirect(Policy::none())
@@ -41,25 +32,15 @@ pub fn full_chain(transactions: &Vec<Tdata>)
     
 
     let request = client.post(init_login_url)
-        .headers(init_login_headers)
         .form(&login_params)
         .build()
         .unwrap();
 
     println!("{:#?}\n", request);
-    //println!("{:?}\n", request.body());
 
     let response = client.execute(request).unwrap();
 
     println!("{:#?}", response);
-    //println!("{:?}", response.text());
-    //let cookies = response.cookies();
-    //for cookie in cookies
-    //{
-    //    println!("{:?}", cookie);
-    //}
-
-    return;
 
     /* Property search */
     let property_search_url = "https://hub1.10ninety.co.uk/lettings/admin/propertylist.asp";
@@ -76,12 +57,27 @@ pub fn full_chain(transactions: &Vec<Tdata>)
 
     println!("{:#?}\n", prop_search_request);
 
-    let prop_search_response = client.execute(prop_search_request).unwrap();
+    let prop_search_response = client.execute(prop_search_request)
+        .unwrap();
 
     println!("{:#?}", prop_search_response);
 
 
-    
+    /* Lettings list */
+    let lettings_list_url = "https://hub1.10ninety.co.uk/lettings/admin/lettingslist.asp";
+
+    let lettings_search_request = client.get(lettings_list_url)
+        .query(&[("Ref", ref_code)])
+        .build()
+        .unwrap();
+
+    println!("{:#?}\n", lettings_search_request);
+
+    let lettings_search_response = client.execute(lettings_search_request)
+        .unwrap();
+
+    println!("{:#?}\n", lettings_search_response);
+
 }
 
 pub fn login()
