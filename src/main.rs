@@ -1,6 +1,7 @@
 mod transaction_parsing;
 mod tenninety_http;
 mod t_data;
+mod html_parser;
 
 use transaction_parsing::retrieve_transactions_data;
 use tenninety_http::*;

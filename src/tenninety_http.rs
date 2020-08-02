@@ -1,5 +1,6 @@
 use reqwest::blocking::Client;
 use crate::t_data::Tdata;
+use crate::html_parser::*;
 
 pub fn full_chain(transactions: &Vec<Tdata>)
 {
@@ -18,12 +19,12 @@ pub fn full_chain(transactions: &Vec<Tdata>)
 
     property_search(&client, &ref_code);
 
-    list_lettings(&client, &ref_code);
+    let lettings_list_html = list_lettings(&client, &ref_code);
 
     /* Select particular letting */
     
-    //Retrieve most recent letting
-
+    //Retrieve most recent letting from html
+    parse_lettings_list(&lettings_list_html);
 }
 
 fn login(client: &Client)
@@ -73,7 +74,7 @@ fn property_search(client: &Client, ref_code: &String)
 
 }
 
-fn list_lettings(client: &Client, ref_code: &String)
+fn list_lettings(client: &Client, ref_code: &String) -> String
 {
 
     let lettings_list_url = "https://hub1.10ninety.co.uk/lettings/admin/lettingslist.asp";
@@ -89,5 +90,9 @@ fn list_lettings(client: &Client, ref_code: &String)
         .unwrap();
 
     println!("{:#?}\n", lettings_search_response);
+
+    return lettings_search_response.text()
+        .ok()
+        .unwrap();
 
 }
