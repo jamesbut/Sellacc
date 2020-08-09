@@ -24,7 +24,8 @@ pub fn full_chain(transactions: &Vec<Tdata>)
     /* Select particular letting */
     
     //Retrieve most recent letting from html
-    parse_lettings_list(&lettings_list_html);
+    let most_recent_let_href = parse_lettings_list(&lettings_list_html);
+    println!("{:#?}", most_recent_let_href);
 }
 
 fn login(client: &Client)
