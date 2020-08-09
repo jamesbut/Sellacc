@@ -25,7 +25,10 @@ pub fn full_chain(transactions: &Vec<Tdata>)
     
     //Retrieve most recent letting from html
     let most_recent_let_href = parse_lettings_list(&lettings_list_html);
-    println!("{:#?}", most_recent_let_href);
+    //println!("{:#?}", most_recent_let_href);
+
+    letting_select(&client, &most_recent_let_href);
+
 }
 
 fn login(client: &Client)
@@ -95,5 +98,29 @@ fn list_lettings(client: &Client, ref_code: &String) -> String
     return lettings_search_response.text()
         .ok()
         .unwrap();
+
+}
+
+fn letting_select(client: &Client, query_string: &String)
+{
+
+    let letting_select_url = "https://hub1.10ninety.co.uk/lettings/admin/LettingsDetail.asp";
+
+    //println!("Query string: {:#?}", query_string);
+    let ref_query_val = query_string.split('=').last().unwrap();
+    //println!("Ref query val: {:#?}", ref_query_val);
+
+    let letting_select_request = client.get(letting_select_url)
+       .query(&[("Ref", ref_query_val)])
+       .build()
+       .unwrap();
+
+    println!("{:#?}", letting_select_request);
+
+    let letting_select_response = client.execute(letting_select_request)
+        .unwrap();
+
+    println!("{:#?}", letting_select_response);
+    println!("{:#?}", letting_select_response.text());
 
 }
