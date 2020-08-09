@@ -21,13 +21,17 @@ pub fn full_chain(transactions: &Vec<Tdata>)
 
     let lettings_list_html = list_lettings(&client, &ref_code);
 
-    /* Select particular letting */
-    
     //Retrieve most recent letting from html
     let most_recent_let_href = parse_lettings_list(&lettings_list_html);
-    //println!("{:#?}", most_recent_let_href);
 
     letting_select(&client, &most_recent_let_href);
+
+    //Get receipts page because we need to parse the html to build the post request
+    let receipts_html = letting_receipts(&client, &most_recent_let_href);
+
+    //Parse receipts html for relevant information for receipt post request
+    let wrk_key = most_recent_let_href.split('=').last().unwrap().to_string();
+    let receipts_post_data = parse_receipts(&receipts_html, wrk_key);
 
 }
 
@@ -106,9 +110,7 @@ fn letting_select(client: &Client, query_string: &String)
 
     let letting_select_url = "https://hub1.10ninety.co.uk/lettings/admin/LettingsDetail.asp";
 
-    //println!("Query string: {:#?}", query_string);
     let ref_query_val = query_string.split('=').last().unwrap();
-    //println!("Ref query val: {:#?}", ref_query_val);
 
     let letting_select_request = client.get(letting_select_url)
        .query(&[("Ref", ref_query_val)])
@@ -121,6 +123,36 @@ fn letting_select(client: &Client, query_string: &String)
         .unwrap();
 
     println!("{:#?}", letting_select_response);
-    println!("{:#?}", letting_select_response.text());
 
+}
+
+fn letting_receipts(client: &Client, query_string: &String) -> String
+{
+
+    let letting_receipt_url = "https://hub1.10ninety.co.uk/lettings/admin/LettingsReceipts.asp";
+
+    let ref_query_val = query_string.split('=').last().unwrap();
+
+    let letting_receipt_request = client.get(letting_receipt_url)
+       .query(&[("Ref", ref_query_val)])
+       .build()
+       .unwrap();
+
+    println!("{:#?}", letting_receipt_request);
+
+    let letting_receipt_response = client.execute(letting_receipt_request)
+        .unwrap();
+
+    println!("{:#?}", letting_receipt_response);
+
+    return letting_receipt_response.text()
+        .ok()
+        .unwrap();
+}
+
+fn input_receipt(client: &Client)
+{
+    //I need to somehow build this huge post request
+    //All the information is in the html though so I am going to have to do some 
+    //serious parsing
 }

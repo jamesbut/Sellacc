@@ -36,6 +36,7 @@ pub fn parse_lettings_list(lettings_list_html: &String) -> String
     most_recent_ref
 }
 
+//Calculate the most recent out of all the lettings references/links/hrefs
 fn calculate_most_recent_ref(lettings_refs: &Vec<String>) -> String
 {
     let mut most_recent_ref = &lettings_refs[0];
@@ -82,4 +83,51 @@ fn calculate_most_recent_date(date1: &str, date2: &str) -> bool
     }
 
     true
+}
+
+//Parses receipts html for all the relevant information to submit the final receipt
+//post request
+pub fn parse_receipts(receipts_html: &String, wrk_key: String) -> Vec<(String, String)>
+{
+    println!("{:#?}", receipts_html);
+
+    let mut form_data: Vec<(String, String)> = Vec::new();
+
+    //Build some initial form data
+    form_data.push(("curPage".to_string(), "".to_string()));
+    form_data.push(("WrkKey".to_string(), wrk_key));
+
+    let document = Html::parse_document(receipts_html);
+
+    retreive_value_from_input_named("Date1", &document);
+    retreive_value_from_input_named("Description1", &document);
+    retreive_value_from_input_named("Amountdue1", &document);
+    retreive_value_from_input_named("Amount1", &document);
+    retreive_value_from_input_named("Receivedfrom1", &document);
+    retreive_value_from_input_named("Note1", &document);
+    retreive_value_from_input_named("receivedby1", &document);
+    retreive_value_from_input_named("Duedate1", &document);
+    retreive_value_from_input_named("Key1", &document);
+    retreive_value_from_input_named("Upd1", &document);
+
+    //println!("{:#?}", form_data);
+    form_data
+
+}
+
+fn retreive_value_from_input_named(name: &str, document: &scraper::html::Html) -> String
+{
+    let parse_string = r#"input[name=""#.to_owned() + name + r#""]"#;
+    let selector = Selector::parse(&parse_string).unwrap();
+
+    let value = document.select(&selector)
+        .next()
+        .unwrap()
+        .value()
+        .attr("value")
+        .unwrap()
+        .to_string();
+
+    println!("{:#?}", value);
+    value
 }
