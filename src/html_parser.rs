@@ -99,6 +99,31 @@ pub fn parse_receipts(receipts_html: &String, wrk_key: String) -> Vec<(String, S
 
     let document = Html::parse_document(receipts_html);
 
+    let input_names = ["Date", 
+                       "Description",
+                       "Amountdue",
+                       "Amount",
+                       "Receivedfrom",
+                       "Note",
+                       "receivedby",
+                       "Duedate",
+                       "Key",
+                       "Upd"];
+
+    let mut input_num = 1;
+    loop {
+
+        for name in input_names.iter() 
+        {
+            let input_name = (*name).to_owned() + &input_num.to_string();
+            //println!("{:#?}", input_name);
+            retreive_value_from_input_named(&input_name, &document);
+        }
+        input_num += 1;
+
+    }
+
+    /*
     retreive_value_from_input_named("Date1", &document);
     retreive_value_from_input_named("Description1", &document);
     retreive_value_from_input_named("Amountdue1", &document);
@@ -109,6 +134,7 @@ pub fn parse_receipts(receipts_html: &String, wrk_key: String) -> Vec<(String, S
     retreive_value_from_input_named("Duedate1", &document);
     retreive_value_from_input_named("Key1", &document);
     retreive_value_from_input_named("Upd1", &document);
+    */
 
     //println!("{:#?}", form_data);
     form_data
